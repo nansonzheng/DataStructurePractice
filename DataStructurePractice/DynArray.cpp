@@ -7,6 +7,11 @@ DynArray<T>::DynArray(int initSize) : s(0), cap(initSize) {
 }
 
 template <typename T>
+DynArray<T>::~DynArray() {
+	delete arr;
+}
+
+template <typename T>
 void DynArray<T>::expand() {
 	T[] newArr = new T[cap * 2];
 	memmove(newArr, arr, sizeof(T) * cap);
@@ -35,6 +40,19 @@ const T& DynArray<T>::operator[] (int index) const {
 }
 
 template <typename T>
-void add(T ele) {
+void DynArray<T>::add(T ele) {
+	if (s == cap)
+		expand();
 
+	arr[s++] = ele;
+}
+
+template <typename T>
+void DynArray<T>::erase(T ele) {
+	
+}
+
+template <typename T>
+void DynArray<T>::eraseAt(int index) {
+	arr[index] = 
 }

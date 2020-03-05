@@ -21,7 +21,7 @@
     <ClInclude Include="LinkedList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header.h">
+    <ClInclude Include="DynArray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

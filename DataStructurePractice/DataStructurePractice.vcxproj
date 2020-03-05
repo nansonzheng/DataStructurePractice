@@ -151,7 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Header.h" />
+    <ClInclude Include="DynArray.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

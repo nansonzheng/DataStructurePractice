@@ -13,7 +13,7 @@ private:
 
 public:
 	DynArray(int size);
-
+	~DynArray();
 	T& operator[](int);
 	const T& operator[](int) const;
 
