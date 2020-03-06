@@ -4,11 +4,13 @@
 #include "pch.h"
 #include "LinkedList.h"
 #include "LinkedList.cpp"
+#include "DynArray.cpp"
+#include "CircularList.cpp"
 #include <iostream>
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+    std::cout << "Hello World!\nTesting linked list" << std::endl; 
 	LinkedList<int> *ll = new LinkedList<int>();
 
 	ll->add(1);
@@ -25,7 +27,38 @@ int main()
 	std::cout << "final size: " << ll->size() << "; final head: " << ll->getHead()->val << "; final tail: " << ll->getTail()->val << std::endl;
 	delete ll;
 
+	std::cout << "Testing dynamic array" << std::endl;
 
+	DynArray<int> *da = new DynArray<int>(5);
+	da->add(1);
+	da->add(2);
+	da->add(3);
+	da->add(4);
+	(*da)[2] = 5;
+	da->eraseAt(1);
+	da->add(6);
+	da->add(7);
+	da->add(8);
+	for (auto it = da->begin(); it != da->end(); it++) {
+		std::cout << *it;
+	}
+	std::cout << std::endl << "final size " << da->size() << "; final capacity " << da->capacity() << std::endl;
+	delete da;
+
+	CircularList<int> *cl = new CircularList<int>();
+	cl->add(1);
+	cl->add(2);
+	cl->add(3);
+	cl->addAt(4, 1);
+	cl->erase(3);
+	cl->eraseAt(0);
+	auto cl_it = cl->begin();
+	do {
+		std::cout << *cl_it;
+	} while (cl_it++ != cl->begin());
+
+	std::cout << std::endl << "ok" << std::endl;
+	delete cl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

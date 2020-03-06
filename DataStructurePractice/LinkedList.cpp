@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "LinkedList.h"
-#include <stdlib.h>
 
 template <typename T>
 LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr), s(0) {}

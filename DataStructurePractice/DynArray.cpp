@@ -1,58 +1,118 @@
 #include "pch.h"
-#include "DynArray.h"
 
 template <typename T>
-DynArray<T>::DynArray(int initSize) : s(0), cap(initSize) {
-	arr = new T[initSize];
-}
+class DynArray {
+private:
+	T *arr;
+	int s, cap;
 
-template <typename T>
-DynArray<T>::~DynArray() {
-	delete arr;
-}
-
-template <typename T>
-void DynArray<T>::expand() {
-	T[] newArr = new T[cap * 2];
-	memmove(newArr, arr, sizeof(T) * cap);
-	delete[] arr;
-	arr = newArr;
-	cap = cap * 2;
-}
-
-template <typename T>
-void DynArray<T>::shrink() {
-	T[] newArr = new T[cap / 2];
-	memmove(newArr, arr, sizeof(T) * cap / 2);
-	delete[] arr;
-	arr = newArr;
-	cap = cap / 2;
-}
-
-template <typename T>
-T& DynArray<T>::operator[] (int index) {
-	return arr[index];
-}
-
-template <typename T>
-const T& DynArray<T>::operator[] (int index) const {
-	return arr[index];
-}
-
-template <typename T>
-void DynArray<T>::add(T ele) {
-	if (s == cap)
-		expand();
-
-	arr[s++] = ele;
-}
-
-template <typename T>
-void DynArray<T>::erase(T ele) {
+	typedef T* iterator;
+	typedef const T* const_iterator;
 	
-}
+	iterator _it;
+	const_iterator _cit;
 
-template <typename T>
-void DynArray<T>::eraseAt(int index) {
-	arr[index] = 
-}
+	void expand() {
+		T* newArr = new T[cap * 2];
+		for (int i = 0; i < s; i++) {
+			newArr[i] = arr[i];
+		}
+		delete[] arr;
+		arr = newArr;
+		cap = cap * 2;
+	}
+
+public:
+
+	DynArray(int size) : arr(new T[size]), s(0), cap(size){
+	}
+
+	~DynArray() {
+		delete[] arr;
+	}
+
+	T& operator[](int index) {
+		return arr[index];
+	}
+
+	const T& operator[](int index) const {
+		return arr[index];
+	}
+
+	iterator begin() const {
+		return &arr[0];
+	}
+	iterator end() const {
+		return &arr[s];
+	}
+
+	T operator*() {
+		return *_it;
+	}
+
+	T* operator->() {
+		return _it;
+	}
+
+	iterator operator++() {
+		iterator i = *this;
+		_it++;
+		return i;
+	}
+
+	iterator operator++(int i) {
+		_it++;
+		return *this;
+	}
+
+	iterator operator!=(const iterator& other) {
+		return _it != other;
+	}
+
+	iterator operator==(const iterator& other) {
+		return _it == other;
+	}
+
+	void add(T ele) {
+		if (s == cap)
+			expand();
+
+		arr[s++] = ele;
+	}
+
+	void erase(T ele) {
+		auto it = begin();
+		for (; it != end() && *it != ele; it++);
+		if (it == end())
+			return;
+		it;
+		for (auto it2 = it + 1; it2 != end(); it2++) {
+			*it = *it2;
+			it++;
+		}
+		s--;
+		return;
+	}
+
+	void eraseAt(int index) {
+		auto it = begin() + index;
+		for (auto it2 = it + 1; it2 != end(); it2++) {
+			*it = *it2;
+			it++;
+		}
+		s--;
+		return;
+	}
+
+	T& at(int index) {
+		return arr[index];
+	}
+
+	int size() {
+		return s;
+	}
+
+	int capacity() {
+		return cap;
+	}
+};

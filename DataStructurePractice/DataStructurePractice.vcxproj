@@ -151,11 +151,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DynArray.h" />
     <ClInclude Include="LinkedList.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CircularList.cpp" />
     <ClCompile Include="DataStructurePractice.cpp" />
     <ClCompile Include="DynArray.cpp" />
     <ClCompile Include="LinkedList.cpp" />

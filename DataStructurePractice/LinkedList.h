@@ -6,10 +6,9 @@
 template <typename T>
 class LinkedList
 {
-private:
+protected:
 	struct listNode {
 		listNode *next;
-		listNode *prev;
 		T val;
 	};
 
