@@ -1,4 +1,6 @@
 #include "pch.h"
+#include <vector>
+#include <string>
 
 template <typename T>
 class RedBlackTree {
@@ -12,6 +14,7 @@ private:
 	};
 
 	Node *root;
+	int s;
 
 	Node *getSibling(Node *node) {
 		Node *parent = node->parent;
@@ -28,10 +31,6 @@ private:
 	void rotateLeft(Node *node) {
 		Node *rotateInto = node->right;
 		Node *parent = node->parent;
-		if (rotateInto == nullptr) {
-			throw "Bad rotateLeft call";
-			return;
-		}
 
 		node->right = rotateInto->left;
 		rotateInto->left = node;
@@ -57,10 +56,6 @@ private:
 	void rotateRight(Node *node) {
 		Node *rotateInto = node->left;
 		Node *parent = node->parent;
-		if (rotateInto == nullptr) {
-			throw "Bad rotateRight call";
-			return;
-		}
 
 		node->left = rotateInto->right;
 		rotateInto->right = node;
@@ -86,9 +81,9 @@ private:
 	void insert(Node *child, Node *parent) {
 		// Find appropriate lowermost node and insert
 		while (parent != nullptr) {
-			if (ele < parent->val) {
+			if (child->val < parent->val) {
 				if (parent->left != nullptr)
-					parent == parent->left;
+					parent = parent->left;
 				else {
 					parent->left = child;
 					break;
@@ -164,96 +159,121 @@ private:
 		}
 	}
 
+	// Erases node to be replaced
 	void eraseSpecial(Node *node) {
 		Node *child = (node->right == nullptr) ? node->left : node->right;
+		Node *parent = node->parent;
 
-		child->parent = node->parent;
-		if (node->parent != nullptr)
-			if (node == node->parent->left)
-				node->parent->left = child;
-			else
-				node->parent->right = child;
-		
-		if (node->black) {
-			if (!child->black) 
-				child->black = true;
-			else 
-				eraseRebalance(node);
+		// link child and parent
+		if (child != nullptr) {
+			child->parent = parent;
+			if (parent != nullptr) {
+				if (node == parent->left)
+					parent->left = child;
+				else
+					parent->right = child;
+				root = node;
+			}
+			if (node->black) {
+				if (!child->black)
+					child->black = true;
+				else
+					eraseRebalance(child);
+			}
 		}
+		// "leaf" node - only null children
+		else {
+			eraseRebalance(node);
+			// node cannot be root with no children because 
+			//it's checked before entering this function
+			if (node == parent->left) 
+				parent->left = nullptr;
+			else
+				parent->right = nullptr;
+		}
+		
 		delete node;
 	}
 
 	void eraseRebalance(Node *node) {
 		Node *parent = node->parent;
-		if (parent != nullptr) {
-			Node *sibling = getSibling(node);
+		// case 1
+		if (parent == nullptr)
+			return;
+		
+		Node *sibling = getSibling(node);
 
-			// case 2: sibling is red
-			// proceed to case 3 regardless
-			if (!sibling->black) {
-				parent->black = false;
-				sibling->black = true;
-				if (node == parent->left)
-					rotateLeft(parent);
-				else
-					rotateRight(parent);
-			}
-			// case 3: parent, sibling and sibling's children are all black
-			if (parent->black 
-				&& sibling->black 
-				&& (sibling->left == nullptr || sibling->left->black)
-				&& (sibling->right == nullptr || sibling->right->black)) {
-				sibling->black = false;
-				eraseRebalance(parent);
-			}
-			// case 4: parent is red, sibling and its children are black
-			else if (!parent->black
-				&& sibling->black
-				&& (sibling->left == nullptr || sibling->left->black)
-				&& (sibling->right == nullptr || sibling->right->black)) {
-				sibling->black = false;
-				parent->black = true;
-			}
-			// case 5: sibling's left child is red, others are black. Node to delete is left of parent
-			// proceed to case 6 regardless
-			else {
-				// redundant check due to case 2 but just in case lel
-				if (sibling->black) {
-					if (node == parent->left
-						&& (sibling->right == nullptr || sibling->right->black)
-						&& (sibling->left != nullptr && !sibling->left->black)) {
-						sibling->black = false;
-						sibling->left->black = true;
-						rotateRight(sibling);
-					}
-					else if (node == parent->right
-						&& (sibling->left == nullptr || sibling->left->black)
-						&& (sibling->right != nullptr && !sibling->right->black)) {
-						sibling->black = false;
+		// case 2: sibling is red
+		// proceed to case 3 regardless
+		if (!sibling->black) {
+			parent->black = false;
+			sibling->black = true;
+			if (node == parent->left)
+				rotateLeft(parent);
+			else
+				rotateRight(parent);
+		}
+		// case 3: parent, sibling and sibling's children are all black
+		if (parent->black 
+			&& sibling->black 
+			&& (sibling->left == nullptr || sibling->left->black)
+			&& (sibling->right == nullptr || sibling->right->black)) {
+			sibling->black = false;
+			eraseRebalance(parent);
+		}
+		// case 4: parent is red, sibling and its children are black
+		else if (!parent->black
+			&& sibling->black
+			&& (sibling->left == nullptr || sibling->left->black)
+			&& (sibling->right == nullptr || sibling->right->black)) {
+			sibling->black = false;
+			parent->black = true;
+		}
+		// case 5: sibling's inner child is red, others are black
+		// proceed to case 6 regardless
+		else {
+			// redundant check due to case 2 but just in case lel
+			if (sibling->black) {
+				// checks for inner child and rotate to make outer child red
+				if (node == parent->left
+					&& (sibling->right == nullptr || sibling->right->black)
+					&& (sibling->left != nullptr && !sibling->left->black)) {
+					sibling->black = false;
+					sibling->left->black = true;
+					rotateRight(sibling);
+				}
+				else if (node == parent->right
+					&& (sibling->left == nullptr || sibling->left->black)
+					&& (sibling->right != nullptr && !sibling->right->black)) {
+					sibling->black = false;
+					sibling->right->black = true;
+					rotateLeft(sibling);
+				}
+
+				// case 6: sibling is black, sibling's outer child is red
+				sibling->black = parent->black;
+				node->parent->black = true;
+				if (node == parent->left) {
+					if (sibling->right != nullptr)
 						sibling->right->black = true;
-						rotateLeft(sibling);
-					}
-
-					// case 6: sibling is black, sibling right child is red, node is left child of parent
-					sibling->black = parent->black;
-					node->parent->black = true;
-					if (node == parent->left) {
-						if (sibling->right != nullptr)
-							sibling->right->black = true;
-						rotateLeft(parent);
-					}
-					else {
-						if (sibling->left != nullptr)
-							sibling->left->black = true;
-						rotateRight(parent);
-					}
+					rotateLeft(parent);
+				}
+				else {
+					if (sibling->left != nullptr)
+						sibling->left->black = true;
+					rotateRight(parent);
 				}
 			}
 		}
 	}
 
+	void print(Node *node) {
+		std::cout << "Node" << node->val << " " << (node->black? "BLACK" : "RED")
+			<< " parent: " << ((node->parent == nullptr)? "NULL" : std::to_string(node->parent->val)) <<std::endl;
+	}
+
 public:
-	RedBlackTree() : root(nullptr) {}
+	RedBlackTree() : root(nullptr), s(0) {}
 
 	Node *add(T ele) {
 		Node *node = new Node{
@@ -265,7 +285,7 @@ public:
 		};
 		
 		insert(node, root);
-
+		s++;
 		return node;
 	}
 
@@ -284,23 +304,86 @@ public:
 			return;
 		}
 
-		// Trivial case: leaf node (AKA 2 leaf children (nil))
-		if (node->left == nullptr && node->right == nullptr) {
-			Node *parent = node->parent;
-			if (parent == nullptr)
-				root = nullptr;
-			else {
-				if (node == parent->left)
-					parent->left = nullptr;
-				else
-					parent->right = nullptr;
-			}
-
-			delete node;
-			return;
+		// Find successor/predecessor if any
+		Node *replace = nullptr;
+		if (node->right != nullptr) {
+			replace = node->right;
+			while (replace->left != nullptr)
+				replace = replace->left;
 		}
-		// Case: max 1 null child
-		else
-			eraseSpecial(node);
+		else if (node->left != nullptr) {
+			replace = node->left;
+			while (replace->right != nullptr) {
+				replace = replace->right;
+			}
+		}
+		
+		// Replace node if necessary
+		Node *parent = node->parent;
+		if (replace != nullptr) {
+			node->val = replace->val;
+			eraseSpecial(replace);
+		}
+		// node has no children
+		else {
+			if (node == root) {
+				root = nullptr;
+				delete node;
+				return;
+			}
+			else
+				eraseSpecial(node);
+		}
+		s--;
+	}
+
+	bool contains(T ele) {
+		Node *node = root;
+		while (node != nullptr && node->val != ele) {
+			if (ele < node->val)
+				node = node->left;
+			else
+				node = node->right;
+		}
+		return node != nullptr;
+	}
+
+	std::vector<T> inOrder() {
+		return inOrder(root);
+	}
+
+	std::vector<T> inOrder(Node *node) {
+		std::vector<T> res = std::vector<T>(), temp;
+		if (node->left != nullptr) {
+			temp = inOrder(node->left);
+			res = temp;
+		}
+		res.emplace_back(node->val);
+		if (node->right != nullptr) {
+			temp = inOrder(node->right);
+			res.insert(res.end(), temp.begin(), temp.end());
+		}
+		return res;
+	}
+
+	int size() {
+		return s;
+	}
+
+	void printAll() {
+		if (root != nullptr)
+			printAll(root);
+	}
+
+	void printAll(Node *node) {
+		if (node->left != nullptr)
+			printAll(node->left);
+		print(node);
+		if (node->right != nullptr)
+			printAll(node->right);
+	}
+
+	Node *getRoot() {
+		return root;
 	}
 };

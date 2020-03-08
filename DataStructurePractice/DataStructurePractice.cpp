@@ -6,7 +6,9 @@
 #include "LinkedList.cpp"
 #include "DynArray.cpp"
 #include "CircularList.cpp"
+#include "RedBlackTree.cpp"
 #include <iostream>
+#include <string>
 
 int main()
 {
@@ -59,6 +61,27 @@ int main()
 
 	std::cout << std::endl << "ok" << std::endl;
 	delete cl;
+
+	std::cout << "Testing Red-Black tree" << std::endl;
+
+	RedBlackTree<int> *rb = new RedBlackTree<int>();
+	rb->add(5);
+	rb->add(10);
+	rb->add(15);
+	rb->add(20);
+	rb->add(1);
+	rb->add(3);
+	rb->add(7);
+	rb->add(17);
+	rb->add(12);
+	rb->erase(1);
+	rb->erase(17);
+	rb->erase(10);
+	rb->erase(5);
+	rb->printAll();
+	std::cout << std::endl << "Final size: " << rb->size() << std::endl;
+
+	delete rb;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
