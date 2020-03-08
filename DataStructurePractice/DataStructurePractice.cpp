@@ -65,19 +65,25 @@ int main()
 	std::cout << "Testing Red-Black tree" << std::endl;
 
 	RedBlackTree<int> *rb = new RedBlackTree<int>();
-	rb->add(5);
-	rb->add(10);
-	rb->add(15);
-	rb->add(20);
+	rb->add(0);
 	rb->add(1);
-	rb->add(3);
-	rb->add(7);
-	rb->add(17);
+	rb->add(2);
+	rb->add(14);
+	rb->add(13);
 	rb->add(12);
-	rb->erase(1);
-	rb->erase(17);
-	rb->erase(10);
+	rb->add(3);
+	rb->add(4);
+	rb->add(5);
+	rb->add(6);
+	rb->add(7);
+	rb->erase(4);
+	rb->printAll();
 	rb->erase(5);
+	rb->add(11);
+	rb->add(10);
+	rb->add(9);
+	rb->add(8);
+	rb->erase(0);
 	rb->printAll();
 	std::cout << std::endl << "Final size: " << rb->size() << std::endl;
 

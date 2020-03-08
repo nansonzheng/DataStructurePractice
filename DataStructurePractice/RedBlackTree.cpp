@@ -182,7 +182,7 @@ private:
 			}
 		}
 		// "leaf" node - only null children
-		else {
+		else if (node->black) {
 			eraseRebalance(node);
 			// node cannot be root with no children because 
 			//it's checked before entering this function
@@ -205,9 +205,10 @@ private:
 
 		// case 2: sibling is red
 		// proceed to case 3 regardless
-		if (!sibling->black) {
+		if (sibling != nullptr && !sibling->black) {
 			parent->black = false;
-			sibling->black = true;
+			if (sibling != nullptr)
+				sibling->black = true;
 			if (node == parent->left)
 				rotateLeft(parent);
 			else
@@ -215,7 +216,7 @@ private:
 		}
 		// case 3: parent, sibling and sibling's children are all black
 		if (parent->black 
-			&& sibling->black 
+			&& (sibling == nullptr || sibling->black) 
 			&& (sibling->left == nullptr || sibling->left->black)
 			&& (sibling->right == nullptr || sibling->right->black)) {
 			sibling->black = false;
@@ -223,7 +224,7 @@ private:
 		}
 		// case 4: parent is red, sibling and its children are black
 		else if (!parent->black
-			&& sibling->black
+			&& (sibling == nullptr || sibling->black)
 			&& (sibling->left == nullptr || sibling->left->black)
 			&& (sibling->right == nullptr || sibling->right->black)) {
 			sibling->black = false;
