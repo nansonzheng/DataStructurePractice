@@ -186,12 +186,14 @@ private:
 			eraseRebalance(node);
 			// node cannot be root with no children because 
 			//it's checked before entering this function
-			if (node == parent->left) 
+		}
+		if (parent != nullptr) {
+			if (node == parent->left)
 				parent->left = nullptr;
 			else
 				parent->right = nullptr;
 		}
-		
+
 		delete node;
 	}
 

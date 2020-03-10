@@ -31,21 +31,20 @@ int main()
 
 	std::cout << "Testing dynamic array" << std::endl;
 
-	DynArray<int> *da = new DynArray<int>(5);
-	da->add(1);
-	da->add(2);
-	da->add(3);
-	da->add(4);
-	(*da)[2] = 5;
-	da->eraseAt(1);
-	da->add(6);
-	da->add(7);
-	da->add(8);
-	for (auto it = da->begin(); it != da->end(); it++) {
+	DynArray<int> da(5);
+	da.add(1);
+	da.add(2);
+	da.add(3);
+	da.add(4);
+	da[2] = 5;
+	da.eraseAt(1);
+	da.add(6);
+	da.add(7);
+	da.add(8);
+	for (auto it = da.begin(); it != da.end(); it++) {
 		std::cout << *it;
 	}
-	std::cout << std::endl << "final size " << da->size() << "; final capacity " << da->capacity() << std::endl;
-	delete da;
+	std::cout << std::endl << "final size " << da.size() << "; final capacity " << da.capacity() << std::endl;
 
 	CircularList<int> *cl = new CircularList<int>();
 	cl->add(1);
@@ -77,7 +76,6 @@ int main()
 	rb->add(6);
 	rb->add(7);
 	rb->erase(4);
-	rb->printAll();
 	rb->erase(5);
 	rb->add(11);
 	rb->add(10);
